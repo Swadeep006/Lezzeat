@@ -2,41 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* College Canteen Food Ordering App Design System
+All colors MUST be HSL for optimal theming support.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core app colors - warm and appetizing */
+    --background: 28 15% 97%;
+    --foreground: 24 12% 15%;
 
+    /* Card system for food items */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 24 12% 15%;
 
+    /* Popovers and dropdowns */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 24 12% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - vibrant orange for food appeal */
+    --primary: 16 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 16 100% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - warm amber tones */
+    --secondary: 45 93% 47%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted tones for backgrounds */
+    --muted: 45 25% 94%;
+    --muted-foreground: 24 8% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - fresh green for healthy options */
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Success state for orders */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Warning for order status */
+    --warning: 45 93% 47%;
+    --warning-foreground: 24 12% 15%;
 
-    --radius: 0.5rem;
+    /* Destructive actions */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 45 25% 88%;
+    --input: 45 25% 88%;
+    --ring: 16 95% 55%;
+
+    /* Custom gradients for visual appeal */
+    --gradient-primary: linear-gradient(135deg, hsl(16 95% 55%), hsl(16 100% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(45 93% 47%), hsl(45 100% 57%));
+    --gradient-hero: linear-gradient(135deg, hsl(16 95% 55%) 0%, hsl(45 93% 47%) 100%);
+    --gradient-food: linear-gradient(180deg, transparent 0%, hsl(24 12% 15% / 0.6) 100%);
+
+    /* Shadows for depth */
+    --shadow-food-card: 0 4px 12px hsl(16 95% 55% / 0.1);
+    --shadow-elevated: 0 8px 24px hsl(24 12% 15% / 0.08);
+    --shadow-glow: 0 0 24px hsl(16 95% 55% / 0.2);
+
+    /* Animation timing */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
