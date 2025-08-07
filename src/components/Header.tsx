@@ -1,5 +1,6 @@
 import { ShoppingCart, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { MobileMenu } from "./MobileMenu";
 
 interface HeaderProps {
@@ -46,6 +47,8 @@ export const Header = ({
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+          
           <Button 
             variant="ghost" 
             size="icon" 
