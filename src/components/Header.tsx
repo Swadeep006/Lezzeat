@@ -23,10 +23,10 @@ export const Header = ({
           </Button>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">CB</span>
+              <span className="text-primary-foreground font-bold text-sm">LZ</span>
             </div>
             <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              College Bite
+              Lezzeat
             </h1>
           </div>
         </div>

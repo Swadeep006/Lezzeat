@@ -19,13 +19,13 @@ export const HeroSection = ({ onOrderNowClick }: HeroSectionProps) => {
         <div className="container">
           <div className="max-w-2xl text-primary-foreground space-y-6">
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Delicious Food,
+              Lezzeat
               <br />
-              <span className="text-secondary">Delivered Fast</span>
+              <span className="text-secondary">Break your Hunger</span>
             </h1>
             
             <p className="text-lg md:text-xl opacity-90 max-w-md">
-              Order your favorite meals from our college canteen. Fresh, tasty, and always ready when you are!
+              Your favorite college canteen meals, now just a tap away. Fresh, delicious, and ready when you are!
             </p>
             
             <div className="flex flex-wrap gap-6 py-4">

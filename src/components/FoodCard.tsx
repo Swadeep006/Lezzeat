@@ -89,24 +89,34 @@ export const FoodCard = ({
             ) : (
               <div className="flex items-center gap-2">
                 <Button 
-                  variant="outline" 
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onUpdateQuantity(item.id, quantity - 1)}
+                  variant="success" 
+                  size="sm"
+                  disabled
+                  className="gap-1"
                 >
-                  <Minus className="h-3 w-3" />
+                  Added
                 </Button>
-                <span className="font-semibold min-w-[20px] text-center">
-                  {quantity}
-                </span>
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onUpdateQuantity(item.id, quantity + 1)}
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onUpdateQuantity(item.id, quantity - 1)}
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <span className="font-semibold min-w-[20px] text-center">
+                    {quantity}
+                  </span>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onUpdateQuantity(item.id, quantity + 1)}
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
             )}
           </div>
