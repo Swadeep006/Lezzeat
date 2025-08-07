@@ -1,10 +1,14 @@
-import { ArrowLeft, Plus, Minus, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Plus, Minus, ShoppingBag, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
   const { toast } = useToast();
+  const [pickupTime, setPickupTime] = useState('');
 
   const cartItems = Object.entries(cart).map(([itemId, quantity]) => ({
     ...foodItems.find(item => item.id === itemId),
@@ -12,6 +16,16 @@ const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
   })).filter(item => item.quantity > 0);
 
   const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  const validatePickupTime = (time) => {
+    if (!time) return false;
+    
+    const [hours, minutes] = time.split(':').map(num => parseInt(num));
+    const timeInMinutes = hours * 60 + minutes;
+    
+    // 9:30 AM = 570 minutes, 3:45 PM = 945 minutes
+    return timeInMinutes >= 570 && timeInMinutes <= 945;
+  };
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -23,15 +37,34 @@ const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
       return;
     }
 
+    if (!pickupTime) {
+      toast({
+        title: "Pickup time required",
+        description: "Please select a pickup time.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!validatePickupTime(pickupTime)) {
+      toast({
+        title: "Invalid pickup time",
+        description: "Pickup time must be between 9:30 AM and 3:45 PM.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Order Placed!",
-      description: `Your order of ₹${totalAmount} has been placed successfully.`,
+      description: `Your order of ₹${totalAmount} has been placed successfully for pickup at ${pickupTime}.`,
     });
     
     // Clear cart after checkout
     cartItems.forEach(item => {
       onUpdateQuantity(item.id, 0);
     });
+    setPickupTime('');
   };
 
   return (
@@ -62,48 +95,99 @@ const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
         ) : (
           <>
             <div className="space-y-3">
-              {cartItems.map(item => (
-                <Card key={item.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4 justify-center">
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-16 h-16 rounded-lg object-cover"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{item.name}</h3>
-                        <p className="text-primary font-bold">₹{item.price}</p>
+              {cartItems.map(item => {
+                const tax = Math.round(item.price * item.quantity * 0.05); // 5% tax
+                const totalWithTax = (item.price * item.quantity) + tax;
+                return (
+                  <Card key={item.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        {/* Food image on the left */}
+                        <img 
+                          src={item.image} 
+                          alt={item.name}
+                          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                        />
+                        
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg mb-2">{item.name}</h3>
+                          
+                          <div className="flex items-center justify-between">
+                            {/* Quantity controls on the right side */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-muted-foreground">Qty:</span>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <span className="font-semibold min-w-[20px] text-center">
+                                  {item.quantity}
+                                </span>
+                                <Button 
+                                  variant="outline" 
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Total price including tax below */}
+                          <div className="mt-3 pt-2 border-t">
+                            <div className="flex justify-between text-sm">
+                              <span>Subtotal:</span>
+                              <span>₹{item.price * item.quantity}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>Tax (5%):</span>
+                              <span>₹{tax}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-lg mt-1">
+                              <span>Total:</span>
+                              <span>₹{totalWithTax}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="font-semibold min-w-[20px] text-center">
-                          {item.quantity}
-                        </span>
-                        <Button 
-                          variant="outline" 
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold">₹{item.price * item.quantity}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
+
+            {/* Pickup Time Selection */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    <Label htmlFor="pickup-time" className="text-lg font-semibold">
+                      Select Pickup Time
+                    </Label>
+                  </div>
+                  <Input
+                    id="pickup-time"
+                    type="time"
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                    min="09:30"
+                    max="15:45"
+                    className="text-lg"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Available pickup time: 9:30 AM - 3:45 PM
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card className="bg-gradient-primary text-primary-foreground">
               <CardContent className="p-6">

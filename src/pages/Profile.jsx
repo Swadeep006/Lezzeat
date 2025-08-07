@@ -1,33 +1,64 @@
-import { useState } from "react";
-import { ArrowLeft, Edit, User, Mail, Phone } from "lucide-react";
+import { useState, useRef } from "react";
+import { ArrowLeft, Camera, User, Mail, Calendar, Shield, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Profile = ({ onBack }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     name: "John Doe",
+    username: "johndoe",
     email: "john.doe@college.edu",
-    phone: "+1234567890"
+    rollNumber: "CS2024001",
+    profilePhoto: null,
+    accountStatus: "Active",
+    joinedDate: "Jul 31, 2025"
   });
-  const [editProfile, setEditProfile] = useState(profile);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
   const { toast } = useToast();
 
-  const handleSave = () => {
-    setProfile(editProfile);
-    setIsEditing(false);
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been successfully updated.",
-    });
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setUploadingPhoto(true);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfile(prev => ({
+          ...prev,
+          profilePhoto: e.target.result
+        }));
+        setUploadingPhoto(false);
+        toast({
+          title: "Photo uploaded",
+          description: "Your profile photo has been updated successfully.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleCancel = () => {
-    setEditProfile(profile);
-    setIsEditing(false);
+  const removePhoto = () => {
+    setProfile(prev => ({
+      ...prev,
+      profilePhoto: null
+    }));
+    toast({
+      title: "Photo removed",
+      description: "Your profile photo has been removed.",
+    });
   };
 
   return (
@@ -40,88 +71,126 @@ const Profile = ({ onBack }) => {
             </Button>
             <h1 className="text-xl font-bold">Profile</h1>
           </div>
-          <Button 
-            variant={isEditing ? "secondary" : "ghost"} 
-            size="icon"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            <Edit className="h-5 w-5" />
-          </Button>
         </div>
       </div>
 
-      <div className="container py-6 space-y-6">
-        <div className="flex justify-center">
-          <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center">
-            <User className="h-12 w-12 text-primary-foreground" />
-          </div>
-        </div>
-
+      <div className="container py-6 space-y-6 max-w-2xl mx-auto">
+        {/* Profile Photo Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Camera className="h-5 w-5" />
+              Profile Photo
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center space-y-4">
+            <Avatar className="w-32 h-32">
+              <AvatarImage src={profile.profilePhoto} alt={profile.name} />
+              <AvatarFallback className="text-2xl">
+                {profile.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+              >
+                {uploadingPhoto ? "Uploading..." : "Upload Photo"}
+              </Button>
+              {profile.profilePhoto && (
+                <Button variant="destructive" onClick={removePhoto}>
+                  Remove Photo
+                </Button>
+              )}
+            </div>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+            
+            <p className="text-sm text-muted-foreground text-center">
+              Upload a profile photo (max 5MB). Supports JPG, PNG, and GIF formats.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Profile Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Personal Information
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Name
-              </Label>
-              {isEditing ? (
-                <Input
-                  id="name"
-                  value={editProfile.name}
-                  onChange={(e) => setEditProfile(prev => ({ ...prev, name: e.target.value }))}
-                />
-              ) : (
-                <p className="text-muted-foreground bg-muted p-3 rounded-md">{profile.name}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </Label>
-              {isEditing ? (
-                <Input
-                  id="email"
-                  type="email"
-                  value={editProfile.email}
-                  onChange={(e) => setEditProfile(prev => ({ ...prev, email: e.target.value }))}
-                />
-              ) : (
-                <p className="text-muted-foreground bg-muted p-3 rounded-md">{profile.email}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                Phone Number
-              </Label>
-              {isEditing ? (
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={editProfile.phone}
-                  onChange={(e) => setEditProfile(prev => ({ ...prev, phone: e.target.value }))}
-                />
-              ) : (
-                <p className="text-muted-foreground bg-muted p-3 rounded-md">{profile.phone}</p>
-              )}
-            </div>
-
-            {isEditing && (
-              <div className="flex gap-2 pt-4">
-                <Button onClick={handleSave} className="flex-1">
-                  Save Changes
-                </Button>
-                <Button variant="outline" onClick={handleCancel} className="flex-1">
-                  Cancel
-                </Button>
+              <label className="text-sm font-medium text-muted-foreground">Name</label>
+              <div className="p-3 bg-muted rounded-lg">
+                {profile.name}
               </div>
-            )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Username</label>
+              <div className="p-3 bg-muted rounded-lg text-muted-foreground">
+                @{profile.username}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Roll Number</label>
+              <div className="p-3 bg-muted rounded-lg text-muted-foreground">
+                {profile.rollNumber}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Email</label>
+              <div className="p-3 bg-muted rounded-lg">
+                {profile.email}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Account Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Account Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm">Joined</span>
+              </div>
+              <span className="font-medium">{profile.joinedDate}</span>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div className="flex items-center gap-2">
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm">Account Status</span>
+              </div>
+              <span 
+                className={`font-medium px-2 py-1 rounded-full text-xs ${
+                  profile.accountStatus === 'Active' 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                }`}
+              >
+                {profile.accountStatus}
+              </span>
+            </div>
           </CardContent>
         </Card>
       </div>
