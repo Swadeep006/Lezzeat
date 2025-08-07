@@ -2,67 +2,21 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { FoodCard, FoodItem } from "@/components/FoodCard";
+import { CategoryTabs } from "@/components/CategoryTabs";
 import { useToast } from "@/hooks/use-toast";
 import Profile from "./Profile";
 import Cart from "./Cart";
-
-// Sample food data with imports
-import burgerImg from "@/assets/burger.jpg";
-import sandwichImg from "@/assets/sandwich.jpg";
-import pizzaImg from "@/assets/pizza.jpg";
-import juiceImg from "@/assets/juice.jpg";
-
-// Today's Specials - Featured items
-const todaysSpecials: FoodItem[] = [
-  {
-    id: "1",
-    name: "Chicken Burger",
-    description: "Crispy chicken patty with fresh lettuce, tomato, and our special sauce",
-    price: 120,
-    image: burgerImg,
-    category: "burgers",
-    isVeg: false,
-    available: true,
-    rating: 4.5,
-  },
-  {
-    id: "2",
-    name: "Veg Sandwich",
-    description: "Fresh vegetables and cheese on whole wheat bread with mint chutney",
-    price: 80,
-    image: sandwichImg,
-    category: "snacks",
-    isVeg: true,
-    available: true,
-    rating: 4.2,
-  },
-  {
-    id: "3",
-    name: "Pepperoni Pizza",
-    description: "Classic pizza with pepperoni, mozzarella cheese, and tomato sauce",
-    price: 200,
-    image: pizzaImg,
-    category: "pizza",
-    isVeg: false,
-    available: true,
-    rating: 4.7,
-  },
-  {
-    id: "4",
-    name: "Fresh Mango Juice",
-    description: "Freshly squeezed mango juice with a hint of mint",
-    price: 60,
-    image: juiceImg,
-    category: "beverages",
-    isVeg: true,
-    available: true,
-    rating: 4.3,
-  },
-];
+import OrderHistory from "./OrderHistory";
+import Settings from "./Settings";
+import Help from "./Help";
+import Registration from "./Registration";
+import { allFoodItems, categories, todaysSpecials } from "@/data/foodData";
 
 const Index = () => {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [currentPage, setCurrentPage] = useState('home');
+  const [isRegistered, setIsRegistered] = useState(true); // Change to false for registration flow
+  const [activeCategory, setActiveCategory] = useState('all');
   const { toast } = useToast();
 
   const cartItemCount = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
@@ -106,6 +60,31 @@ const Index = () => {
     setCurrentPage('home');
   };
 
+  const handleOrderHistoryClick = () => {
+    setCurrentPage('orderHistory');
+  };
+
+  const handleSettingsClick = () => {
+    setCurrentPage('settings');
+  };
+
+  const handleHelpClick = () => {
+    setCurrentPage('help');
+  };
+
+  const handleRegistrationComplete = (userData: any) => {
+    setIsRegistered(true);
+    // Here you would typically save user data
+  };
+
+  const filteredItems = activeCategory === 'all' 
+    ? allFoodItems 
+    : allFoodItems.filter(item => item.category === activeCategory);
+
+  if (!isRegistered) {
+    return <Registration onRegistrationComplete={handleRegistrationComplete} />;
+  }
+
   if (currentPage === 'profile') {
     return <Profile onBack={handleBackToHome} />;
   }
@@ -116,9 +95,21 @@ const Index = () => {
         onBack={handleBackToHome} 
         cart={cart} 
         onUpdateQuantity={handleUpdateQuantity}
-        foodItems={todaysSpecials}
+        foodItems={allFoodItems}
       />
     );
+  }
+
+  if (currentPage === 'orderHistory') {
+    return <OrderHistory onBack={handleBackToHome} />;
+  }
+
+  if (currentPage === 'settings') {
+    return <Settings onBack={handleBackToHome} />;
+  }
+
+  if (currentPage === 'help') {
+    return <Help onBack={handleBackToHome} />;
   }
 
   return (
@@ -128,30 +119,63 @@ const Index = () => {
         onCartClick={handleCartClick}
         onMenuClick={() => {}}
         onProfileClick={handleProfileClick}
+        onOrderHistoryClick={handleOrderHistoryClick}
+        onSettingsClick={handleSettingsClick}
+        onHelpClick={handleHelpClick}
       />
       
       <main>
         <HeroSection onOrderNowClick={handleOrderNow} />
         
-        <section id="specials" className="py-8">
-          <div className="container space-y-6">
+        <section id="specials" className="py-4">
+          <div className="container space-y-4">
             <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold">Today's Specials</h2>
-              <p className="text-muted-foreground">
+              <h2 className="text-2xl font-bold">Today's Specials</h2>
+              <p className="text-muted-foreground text-sm">
                 Fresh, handpicked meals prepared just for you today
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {todaysSpecials.map(item => (
-                <FoodCard
-                  key={item.id}
-                  item={item}
-                  quantity={cart[item.id] || 0}
-                  onAddToCart={handleAddToCart}
-                  onUpdateQuantity={handleUpdateQuantity}
-                />
-              ))}
+            <div className="overflow-x-auto pb-2">
+              <div className="flex gap-4 w-max">
+                {todaysSpecials.map(item => (
+                  <div key={item.id} className="w-64 flex-shrink-0">
+                    <FoodCard
+                      item={item}
+                      quantity={cart[item.id] || 0}
+                      onAddToCart={handleAddToCart}
+                      onUpdateQuantity={handleUpdateQuantity}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-4">
+          <div className="container space-y-4">
+            <div className="sticky top-16 bg-background/95 backdrop-blur z-40 py-2">
+              <CategoryTabs 
+                categories={categories}
+                activeCategory={activeCategory}
+                onCategoryChange={setActiveCategory}
+              />
+            </div>
+            
+            <div className="overflow-x-auto pb-2">
+              <div className="flex gap-4 w-max">
+                {filteredItems.map(item => (
+                  <div key={item.id} className="w-64 flex-shrink-0">
+                    <FoodCard
+                      item={item}
+                      quantity={cart[item.id] || 0}
+                      onAddToCart={handleAddToCart}
+                      onUpdateQuantity={handleUpdateQuantity}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

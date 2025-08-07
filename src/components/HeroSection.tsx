@@ -8,7 +8,7 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ onOrderNowClick }: HeroSectionProps) => {
   return (
-    <section className="relative h-[60vh] min-h-[400px] overflow-hidden rounded-2xl mx-4 mt-4">
+    <section className="relative h-[40vh] min-h-[300px] overflow-hidden rounded-xl mx-2 mt-2">
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${heroImage})` }}
@@ -17,47 +17,32 @@ export const HeroSection = ({ onOrderNowClick }: HeroSectionProps) => {
       
       <div className="relative h-full flex items-center">
         <div className="container">
-          <div className="max-w-2xl text-primary-foreground space-y-6">
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+          <div className="max-w-2xl text-primary-foreground space-y-4">
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight">
               Lezzeat
               <br />
               <span className="text-secondary">Break your Hunger</span>
             </h1>
             
-            <p className="text-lg md:text-xl opacity-90 max-w-md">
+            <p className="text-base md:text-lg opacity-90 max-w-md">
               Your favorite college canteen meals, now just a tap away. Fresh, delicious, and ready when you are!
             </p>
             
-            <div className="flex flex-wrap gap-6 py-4">
+            <div className="flex flex-wrap gap-4 py-2">
               <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span className="text-sm font-medium">Quick Delivery</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 fill-current" />
+                <Star className="h-4 w-4 fill-current" />
                 <span className="text-sm font-medium">4.8 Rating</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                <span className="text-sm font-medium">Fast Pickup</span>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="pt-2">
               <Button 
                 variant="secondary" 
-                size="xl"
+                size="lg"
                 onClick={onOrderNowClick}
                 className="font-semibold"
               >
                 Order Now
-              </Button>
-              <Button 
-                variant="outline" 
-                size="xl"
-                className="bg-background/10 backdrop-blur border-primary-foreground/30 text-primary-foreground hover:bg-background/20"
-              >
-                View Menu
               </Button>
             </div>
           </div>

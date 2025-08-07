@@ -51,7 +51,7 @@ const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
         </div>
       </div>
 
-      <div className="container py-6 space-y-6">
+      <div className="container py-6 space-y-6 max-w-2xl mx-auto">
         {cartItems.length === 0 ? (
           <div className="text-center py-12">
             <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -65,7 +65,7 @@ const Cart = ({ onBack, cart, onUpdateQuantity, foodItems }) => {
               {cartItems.map(item => (
                 <Card key={item.id}>
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 justify-center">
                       <img 
                         src={item.image} 
                         alt={item.name}

@@ -30,7 +30,7 @@ export const FoodCard = ({
 }: FoodCardProps) => {
   return (
     <Card className="overflow-hidden shadow-food-card hover:shadow-elevated transition-all duration-300 hover:scale-[1.02] group">
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/2.5] overflow-hidden">
         <img 
           src={item.image} 
           alt={item.name}
@@ -94,7 +94,7 @@ export const FoodCard = ({
                   disabled
                   className="gap-1"
                 >
-                  Added
+                  Added ({quantity})
                 </Button>
                 <div className="flex items-center gap-1">
                   <Button 
