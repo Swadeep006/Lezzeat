@@ -163,10 +163,27 @@ const Index = () => {
               />
             </div>
             
-            <div className="overflow-x-auto pb-2">
-              <div className="flex gap-4 w-max">
+            {/* All Items - Horizontal scroll */}
+            {activeCategory === 'all' ? (
+              <div className="overflow-x-auto pb-2">
+                <div className="flex gap-4 w-max">
+                  {filteredItems.map(item => (
+                    <div key={item.id} className="w-64 flex-shrink-0">
+                      <FoodCard
+                        item={item}
+                        quantity={cart[item.id] || 0}
+                        onAddToCart={handleAddToCart}
+                        onUpdateQuantity={handleUpdateQuantity}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Other categories - Vertical layout, one item per row */
+              <div className="space-y-4">
                 {filteredItems.map(item => (
-                  <div key={item.id} className="w-64 flex-shrink-0">
+                  <div key={item.id} className="w-full">
                     <FoodCard
                       item={item}
                       quantity={cart[item.id] || 0}
@@ -176,7 +193,7 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            )}
           </div>
         </section>
       </main>
